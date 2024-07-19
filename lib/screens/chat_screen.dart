@@ -29,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _fetchMessages() async {
-    final url = Uri.parse('https://6aef-190-232-119-12.ngrok-free.app/api/messages');
+    final url = Uri.parse('http://localhost:3000/api/messages');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -55,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _sendMessage(String text) async {
-    final url = Uri.parse('https://6aef-190-232-119-12.ngrok-free.app/api/guardarMensaje');
+    final url = Uri.parse('http://localhost:3000/api/guardarMensaje');
     try {
       final response = await http.post(
         url,
@@ -98,9 +98,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 205, 205, 205),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 114, 68, 166),
+        backgroundColor: Colors.white,
         leading: Padding(
           padding: EdgeInsets.only(left: 20.0),
           child: IconButton(
@@ -165,7 +165,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 final user_id = messages[index]['user_id'] ?? '';
                 
                 // Determinar el tipo de usuario para mostrar el mensaje
-                final userType = user_id == userId ? 1 : 2;
+                final userType = user_id == userId ? 2 : 1;
                 
                 return ChatMessage(
                   message: text,

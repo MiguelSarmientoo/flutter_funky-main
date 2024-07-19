@@ -12,7 +12,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleLogin() {
     // Aquí puedes implementar la lógica de validación del login
-    if (username == 'miguelsarmiento' && password == 'password') {
+    if (username == 'admin' && password == '123456') {
       // Redireccionar a HomeScreen si el login es exitoso
       Navigator.pushReplacementNamed(context, '/home');
     } else {
