@@ -87,8 +87,60 @@ class _ChatScreenState extends State<ChatScreen> {
           duration: Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
+
+        // Llamar a la API de ChatGPT para obtener la respuesta del bot
+        _getBotResponse(text);
       } else {
         print('Error al enviar el mensaje: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error en la solicitud HTTP: $error');
+    }
+  }
+
+  Future<void> _getBotResponse(String userMessage) async {
+    if (userMessage == null || userMessage.isEmpty) {
+      print('Mensaje del usuario es nulo o vacío');
+      return;
+    }
+
+    final url = Uri.parse('http://localhost:3000/api/ask');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'prompt': userMessage,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final botMessage = responseData['response']?.toString().trim() ?? '';
+
+        setState(() {
+          messages.insert(
+            0,
+            {
+              'id': DateTime.now().toString(),
+              'text': botMessage,
+              'time': DateFormat('HH:mm').format(DateTime.now()),
+              'user_id': '1', // ID del bot
+              'created_at': DateTime.now().toString(),
+            },
+          );
+        });
+
+        _scrollController.animateTo(
+          0.0,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      } else {
+        print('Error al obtener respuesta del bot: ${response.statusCode}');
+        print('Respuesta del servidor: ${response.body}');
       }
     } catch (error) {
       print('Error en la solicitud HTTP: $error');

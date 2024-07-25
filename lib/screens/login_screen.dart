@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_funky/screens/home_screen.dart'; // Asegúrate de importar tu pantalla principal
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -10,27 +11,40 @@ class _LoginScreenState extends State<LoginScreen> {
   String username = '';
   String password = '';
 
-  void _handleLogin() {
-    // Aquí puedes implementar la lógica de validación del login
-    if (username == 'admin' && password == '123456') {
-      // Redireccionar a HomeScreen si el login es exitoso
+  void _handleLogin() async {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/api/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      // Mostrar mensaje de error si las credenciales son incorrectas
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text('Login Fallido'),
-          content: Text('Credenciales incorrectas.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cerrar'),
-            ),
-          ],
-        ),
-      );
+      _showErrorDialog('Credenciales incorrectas.');
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Login Fallido'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
